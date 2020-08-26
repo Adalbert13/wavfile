@@ -445,7 +445,7 @@ public final class WavFile {
                  * Check if we've found the format chunk. If not, throw an exception as we need the
                  * format information before we can read the data chunk
                  */
-                if (foundFormat == false) {
+                if (!foundFormat) {
                     throw new WavFileException("Data chunk found before Format chunk");
                 }
 
@@ -479,7 +479,7 @@ public final class WavFile {
         /*
          * Throw an exception if no data chunk has been found.
          */
-        if (foundData == false) {
+        if (!foundData) {
             throw new WavFileException("Did not find a data chunk");
         }
 
@@ -565,7 +565,7 @@ public final class WavFile {
         long myInput = input;
         int myPosition = position;
         for (int b = 0; b < count; b++) {
-            buffer[myPosition] = (byte) (input & 0xFF);
+            buffer[myPosition] = (byte) (myInput & 0xFF);
             myInput >>= 8;
             myPosition++;
         }
