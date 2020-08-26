@@ -1,3 +1,5 @@
+package edu.illinois.cs.cs125.lib.wavfile;
+
 /**
  * WavFile-specific exception class.
  */

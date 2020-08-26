@@ -1,3 +1,7 @@
+package edu.illinois.cs.cs125.lib.wavfile;
+
+import edu.illinois.cs.cs125.lib.wavfile.WavFileException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -896,6 +900,102 @@ public final class WavFile {
 
             for (int c = 0; c < numChannels; c++) {
                 returnBuffer[c][myOffset] = floatOffset + (double) readSample() / floatScale;
+            }
+
+            myOffset++;
+            frameCounter++;
+        }
+
+        return count;
+    }
+
+    /**
+     * Read some number of frames from the buffer into a flat float array.
+     *
+     * @param returnBuffer the buffer to read samples into
+     * @param count the number of frames to read
+     * @return the number of frames read
+     * @throws IOException Signals that an I/O exception has occurred
+     * @throws WavFileException a WavFile-specific exception
+     */
+    public int readFrames(final float[] returnBuffer, final int count)
+        throws IOException, WavFileException {
+        return readFrames(returnBuffer, 0, count);
+    }
+
+    /**
+     * Read some number of frames from a specific offset in the buffer into a flat float array.
+     *
+     * @param returnBuffer the buffer to read samples into
+     * @param offset the buffer offset to read from
+     * @param count the number of frames to read
+     * @return the number of frames read
+     * @throws IOException Signals that an I/O exception has occurred
+     * @throws WavFileException a WavFile-specific exception
+     */
+    public int readFrames(final float[] returnBuffer, final int offset, final int count)
+        throws IOException, WavFileException {
+        int myOffset = offset;
+        if (ioState != IOState.READING) {
+            throw new IOException("Cannot read from WavFile instance");
+        }
+
+        for (int f = 0; f < count; f++) {
+            if (frameCounter == numFrames) {
+                return f;
+            }
+
+            for (int c = 0; c < numChannels; c++) {
+                returnBuffer[myOffset] = (float) (floatOffset + (double) readSample() / floatScale);
+                myOffset++;
+            }
+
+            frameCounter++;
+        }
+
+        return count;
+    }
+
+    /**
+     * Read some number of frames from the buffer into a multi-dimensional float array.
+     *
+     * @param returnBuffer the buffer to read samples into
+     * @param count the number of frames to read
+     * @return the number of frames read
+     * @throws IOException Signals that an I/O exception has occurred
+     * @throws WavFileException a WavFile-specific exception
+     */
+    public int readFrames(final float[][] returnBuffer, final int count)
+        throws IOException, WavFileException {
+        return readFrames(returnBuffer, 0, count);
+    }
+
+    /**
+     * Read some number of frames from a specific offset in the buffer into a multi-dimensional
+     * float array.
+     *
+     * @param returnBuffer the buffer to read samples into
+     * @param count the number of frames to read
+     * @param offset the buffer offset to read from
+     * @return the number of frames read
+     * @throws IOException Signals that an I/O exception has occurred
+     * @throws WavFileException a WavFile-specific exception
+     */
+    public int readFrames(final float[][] returnBuffer, final int offset,
+                          final int count)
+        throws IOException, WavFileException {
+        int myOffset = offset;
+        if (ioState != IOState.READING) {
+            throw new IOException("Cannot read from WavFile instance");
+        }
+
+        for (int f = 0; f < count; f++) {
+            if (frameCounter == numFrames) {
+                return f;
+            }
+
+            for (int c = 0; c < numChannels; c++) {
+                returnBuffer[c][myOffset] = (float) (floatOffset + (double) readSample() / floatScale);
             }
 
             myOffset++;
