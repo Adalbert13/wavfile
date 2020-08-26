@@ -1289,4 +1289,99 @@ public final class WavFile {
 
         return count;
     }
+
+    /**
+     * Write some number of frames into the buffer from a flat float array.
+     *
+     * @param sampleBuffer the buffer to read samples from
+     * @param count the number of frames to write
+     * @return the number of frames written
+     * @throws IOException Signals that an I/O exception has occurred
+     * @throws WavFileException a WavFile-specific exception
+     */
+    public int writeFrames(final float[] sampleBuffer, final int count)
+        throws IOException, WavFileException {
+        return writeFrames(sampleBuffer, 0, count);
+    }
+
+    /**
+     * Write some number of frames into the buffer at a specific offset from a flat float array.
+     *
+     * @param sampleBuffer the buffer to read samples from
+     * @param count the number of frames to write
+     * @param offset the buffer offset to write into
+     * @return the number of frames written
+     * @throws IOException Signals that an I/O exception has occurred
+     * @throws WavFileException a WavFile-specific exception
+     */
+    public int writeFrames(final float[] sampleBuffer, final int offset, final int count)
+        throws IOException, WavFileException {
+        int myOffset = offset;
+        if (ioState != IOState.WRITING) {
+            throw new IOException("Cannot write to WavFile instance");
+        }
+
+        for (int f = 0; f < count; f++) {
+            if (frameCounter == numFrames) {
+                return f;
+            }
+
+            for (int c = 0; c < numChannels; c++) {
+                writeSample((long) (floatScale * (floatOffset + sampleBuffer[myOffset])));
+                myOffset++;
+            }
+
+            frameCounter++;
+        }
+
+        return count;
+    }
+
+    /**
+     * Write some number of frames into the buffer from a multi-dimensional float array.
+     *
+     * @param sampleBuffer the buffer to read samples from
+     * @param count the number of frames to write
+     * @return the number of frames written
+     * @throws IOException Signals that an I/O exception has occurred
+     * @throws WavFileException a WavFile-specific exception
+     */
+    public int writeFrames(final float[][] sampleBuffer, final int count)
+        throws IOException, WavFileException {
+        return writeFrames(sampleBuffer, 0, count);
+    }
+
+    /**
+     * Write some number of frames into the buffer at a specific offset from a multi-dimensional
+     * float array.
+     *
+     * @param sampleBuffer the buffer to read samples from
+     * @param count the number of frames to write
+     * @param offset the buffer offset to write into
+     * @return the number of frames written
+     * @throws IOException Signals that an I/O exception has occurred
+     * @throws WavFileException a WavFile-specific exception
+     */
+    public int writeFrames(final float[][] sampleBuffer, final int offset, final int count)
+        throws IOException, WavFileException {
+        int myOffset = offset;
+        if (ioState != IOState.WRITING) {
+            throw new IOException("Cannot write to WavFile instance");
+        }
+
+        for (int f = 0; f < count; f++) {
+            if (frameCounter == numFrames) {
+                return f;
+            }
+
+            for (int c = 0; c < numChannels; c++) {
+                writeSample((long) (floatScale * (floatOffset + sampleBuffer[c][myOffset])));
+            }
+
+            myOffset++;
+            frameCounter++;
+        }
+
+        return count;
+    }
 }
